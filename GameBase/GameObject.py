@@ -8,12 +8,16 @@ from GameBase.GameEntity import GameEntity
 
 
 class GameObject(GameEntity):
-    def __init__(self, sprite=None):
-        super().__init__(sprite=sprite)
+    def __init__(self, rect, sprite=None):
+        super().__init__(rect, sprite=sprite)
 
-    def update(self, gametime):
-        # Update the position
-        super().update(gametime, (350, 250, 100, 100))
+    def update(self, gametime, rect):
+        # Update the position and size with a newly given one
+        self.x, self.y, self.w, self.h = rect
+
+        # Pass to sprite
+        if self._sprite is not None:
+            self._sprite.update(rect)
 
     def draw(self, screen):
         super().draw(screen)

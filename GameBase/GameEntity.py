@@ -14,22 +14,12 @@ from GameBase.Sprite import Sprite
 
 
 class GameEntity():
-    def __init__(self, sprite=None):
+    def __init__(self, rect, sprite=None):
         self._sprite = sprite
 
-        self.x = 0
-        self.y = 0
-        self.w = 0
-        self.h = 0
-
-        self.visible = False
-
-    def update(self, gametime, rect):
-        # Set own rectangle values
         self.x, self.y, self.w, self.h = rect
 
-        # Pass on the sprite
-        self._sprite.update(rect)
+        self.visible = False
 
     def draw(self, screen):
         # Update the sprite if there is one
