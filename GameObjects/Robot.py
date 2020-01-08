@@ -6,6 +6,8 @@
 #   is er ook de Programma subclass van de Robot, die gebruikt wordt om hem
 #   te programmeren.
 
+import threading
+
 from GameBase.GameObject import GameObject
 from GameBase.Sprite import Sprite
 
@@ -70,7 +72,6 @@ class Program:
 
         pass
 
-
     def kijk(self):
         """
             Geeft terug wat er voor de robot staat.
@@ -79,13 +80,44 @@ class Program:
         pass
 
 
+class ExecutionThread(threading.Thread):
+    """
+        The ExecutionThread runs the robot program detached from the main
+        program. It's biggest job is relaying the information stored in the
+        program (actions) and relaying those back to the robot. Additionally,
+        it can also request information (such as in kijk()). Note that every-
+        thing is handle
+    """
+
+    def __init__(self, program, func):
+        threading.Thread.__init__(self, daemon=True)
+
+        self.running = False
+
+        self._program = program
+
+    def run(self):
+        self.running = True
+
+        self._program(Program())
+
+        self.running = False
+
+
 # Represents the Robot (player)
 class Robot(GameObject):
     def __init__(self, program):
         super().__init__((0, 0, 75, 75), sprite=Sprite("GameObjects/sprites/robot1.png"))
 
-        # Run the program on the robot thread
-        
+        # Create a program
+        program_host = Program()
+
+        # Create the thread
+        execution = ExecutionThread(program_host, program)
+
+        # Run it
+        execution.start()
+
     def __del__(self):
         # Stop the execution thread
 
