@@ -9,4 +9,11 @@ from GameBase.GameEntity import GameEntity
 
 class GameObject(GameEntity):
     def __init__(self):
-        pass
+        super().__init__()
+
+    def update(self, gametime):
+        # Update the position
+        super().update(gametime, (350, 250, 100, 100))
+
+    def draw(self, screen):
+        super().draw(screen)

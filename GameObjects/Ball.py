@@ -7,6 +7,13 @@
 from GameBase.GameObject import GameObject
 
 
+# Represents a Ball
 class Ball(GameObject):
     def __init__(self):
-        pass
+        super().__init__()
+
+        # Set position
+        self.x = 350
+        self.y = 250
+        self.w = 100
+        self.h = 100
