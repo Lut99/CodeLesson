@@ -8,8 +8,8 @@ from GameBase.GameEntity import GameEntity
 
 
 class GameObject(GameEntity):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, sprite=None):
+        super().__init__(sprite=sprite)
 
     def update(self, gametime):
         # Update the position

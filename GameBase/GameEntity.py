@@ -26,16 +26,16 @@ class GameEntity():
 
     def update(self, gametime, rect):
         # Set own rectangle values
-        self.x = rect[0]
-        self.y = rect[1]
-        self.w = rect[2]
-        self.h = rect[3]
+        self.x, self.y, self.w, self.h = rect
+
+        # Pass on the sprite
+        self._sprite.update(rect)
 
     def draw(self, screen):
         # Update the sprite if there is one
         if self._sprite is not None:
             # Draw the sprite class
-            self._sprite.draw(screen, (self.x, self.y, self.w, self.h))
+            self._sprite.draw(screen)
         else:
             # Simply draw a black rectangle
             pygame.draw.rect(screen, (0, 0, 0), (self.x, self.y, self.w, self.h))
