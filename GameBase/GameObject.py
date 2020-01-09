@@ -8,16 +8,19 @@ from GameBase.GameEntity import GameEntity
 
 
 class GameObject(GameEntity):
-    def __init__(self, rect, sprite=None):
-        super().__init__(rect, sprite=sprite)
+    def __init__(self, rect, sprite=None, rotation="oost", crossable=True):
+        super().__init__(rect, sprite=sprite, crossable=crossable)
 
-    def update(self, gametime, rect):
+        self.rotation = rotation
+
+    def update(self, gametime, rect, rotation):
         # Update the position and size with a newly given one
         self.x, self.y, self.w, self.h = rect
+        self.rotation = rotation
 
         # Pass to sprite
         if self._sprite is not None:
-            self._sprite.update(rect)
+            self._sprite.update(rect, self.rotation)
 
     def draw(self, screen):
         super().draw(screen)

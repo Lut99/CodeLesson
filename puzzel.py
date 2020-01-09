@@ -6,4 +6,8 @@
 
 
 def level1(robot):
-    pass
+    while True:
+        robot.draai_naar("west")
+        robot.stap()
+        robot.draai_naar("noord")
+        robot.stap()

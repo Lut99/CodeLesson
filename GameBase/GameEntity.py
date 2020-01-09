@@ -10,16 +10,15 @@
 
 import pygame
 
-from GameBase.Sprite import Sprite
-
 
 class GameEntity():
-    def __init__(self, rect, sprite=None):
+    def __init__(self, rect, sprite=None, crossable=True):
         self._sprite = sprite
 
         self.x, self.y, self.w, self.h = rect
 
         self.visible = False
+        self.crossable = crossable
 
     def draw(self, screen):
         # Update the sprite if there is one

@@ -68,7 +68,7 @@ class GameTime():
         second_offset = time_passed - int(time_passed)
 
         # Return whether a whole second has passed since the start of the class
-        return second_offset == 0
+        return second_offset < 0.01
 
     def get_seconds(self):
         """

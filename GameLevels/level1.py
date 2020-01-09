@@ -4,8 +4,6 @@
 # Dit is het eerste level van de puzzel. Het doel is om te leren hoe de puzzel
 #   werkt, en hoe je de bal kan aansturen.
 
-from GameObjects.Robot import Robot
-
 
 def load(self, object_list, entity_list):
     """
@@ -14,6 +12,4 @@ def load(self, object_list, entity_list):
     """
 
     # Initialize the robot, load the program and add it to the list
-    object_list.append(
-        Robot(__import__("puzzel.py", fromlist=['']).level1)
-    )
+    return (0, 0, "oost")
