@@ -200,7 +200,7 @@ class Robot(GameObject):
                 if clipped:
                     # Show a textbox
                     self.talk("Obstakel!")
-                
+
                 # If we're now on the flag, show the win box and done with it
                 obj = self._level.get(self.x / self._level.grid_size, self.y / self._level.grid_size)
                 if type(obj) == Flag:
@@ -238,10 +238,10 @@ class Robot(GameObject):
                 obj = self._level.get(x, y)
                 if obj == "OutOfBounds":
                     self.talk("Ik zie: Rand")
-                    self._program_host.result = obj
+                    self._program_host.result = "Rand"
                 elif obj == "Air":
                     self.talk("Ik zie: Niks")
-                    self._program_host.result = obj
+                    self._program_host.result = "Lucht"
                 else:
                     self.talk(f"Ik zie: {obj.name}")
                     self._program_host.result = obj.name
@@ -278,12 +278,12 @@ class Robot(GameObject):
             up_left = (self.x + (self.w * 0.5) - (w / 2) - 10, self.y - h - 20)
             if up_left[1] < 0:
                 up_left = (self.x + (self.w * 0.5) - (w / 2) - 10, self.y + self.h)
-            
+
             # Also check if X is out-of-bounds
             if up_left[0] < 0:
                 up_left = (0, up_left[1])
             if up_left[0] + w + 20 > screen.get_size()[0]:
-                up_left[0] = screen.get_size()[0] - w - 20
+                up_left = (screen.get_size()[0] - w - 20, up_left[1])
 
             # Draw the rectangle
             pygame.draw.rect(screen, (255, 255, 255), (up_left[0], up_left[1], w + 20, h + 20))

@@ -14,15 +14,33 @@ import os
 
 from GameBase.GameTime import GameTime
 from GameBase.GameLevel import Level
+from GameLevels.LevelSelector import LevelSelector
 
 GRID_SIZE = 75
 
 
-def main(level_name, screen_width, screen_height, framerate, updaterate):
+def main(framerate, updaterate):
     print("\nInitializeren van PyGame...", end="")
     pygame.init()
     pygame.font.init()
     print(" Gedaan")
+
+    print("\nInitializeren van scherm...", end="")
+    screen = pygame.display.set_mode((12 * GRID_SIZE, 8 * GRID_SIZE))
+    pygame.display.set_caption("Puzzel")
+    print(" Gedaan")
+
+    print("\nInitializeren van framerate & update counters...", end="")
+    gtime = GameTime(framerate, updaterate)
+    print(" Gedaan")
+
+    print("\nLaden van level selector...")
+    selector = LevelSelector()
+    print("Level selector geladen.")
+
+    print("\nWachten tot een level is gekozen...")
+    level_name = selector.select()
+    print(f"Gekozen level: {level_name}")
 
     print(f"\nLevel \"{level_name}\" laden...")
     # Check if the path exists
@@ -32,17 +50,8 @@ def main(level_name, screen_width, screen_height, framerate, updaterate):
         sys.exit()
 
     # If it does, load it
-    level = Level(level_name, grid_size=GRID_SIZE, grid_dim=(screen_width, screen_height), show_grid=True)
+    level = Level(level_name, grid_size=GRID_SIZE, grid_dim=(screen_width, screen_height), show_grid=False)
     print("Level laden voltooid")
-
-    print("\nInitializeren van scherm...", end="")
-    screen = pygame.display.set_mode((screen_width * GRID_SIZE, screen_height * GRID_SIZE))
-    pygame.display.set_caption("Puzzel")
-    print(" Gedaan")
-
-    print("Initializeren van framerate & update counters...", end="")
-    gtime = GameTime(framerate, updaterate)
-    print(" Gedaan")
 
     # Main game loop
     print("\nGame loop...")
@@ -71,13 +80,10 @@ def main(level_name, screen_width, screen_height, framerate, updaterate):
 if __name__ == "__main__":
     # Get arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument("level_name")
-    parser.add_argument("-W", "--width", help="De breedte (in vakjes) van het scherm", type=int, default=12)
-    parser.add_argument("-H", "--height", help="De hoogte (in vakjes) van het scherm", type=int, default=8)
     parser.add_argument("-f", "--framerate", help="The target number of frames per second", type=int, default=30)
     parser.add_argument("-u", "--updaterate", help="The target number of updates per second", type=int, default=50)
 
     args = parser.parse_args()
 
     # Run main
-    main(args.level_name, args.width, args.height, args.framerate, args.updaterate)
+    main(args.framerate, args.updaterate)

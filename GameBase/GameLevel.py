@@ -66,7 +66,7 @@ class Level():
                     pygame.draw.line(screen, (0, 0, 0), (i * self.grid_size, 0), (i * self.grid_size, self.grid_dim[1] * self.grid_size))
                 if i > 0 and i < self.grid_dim[1]:
                     pygame.draw.line(screen, (0, 0, 0), (0, i * self.grid_size), (self.grid_dim[0] * self.grid_size, i * self.grid_size))
-        
+
         # Overlay the win box
         if self.made_it:
             w, h = self.font.size("JE HEBT GEWONNEN!!")
@@ -129,7 +129,7 @@ class Level():
             object is present (regardless if an entity is), return "Air".
         """
 
-        if x < 0 or x > self.grid_dim[0] or y < 0 or y > self.grid_dim[0]:
+        if x < 0 or x >= self.grid_dim[0] or y < 0 or y >= self.grid_dim[1]:
             return "OutOfBounds"
 
         for obj in self.objects:
