@@ -6,6 +6,6 @@
 
 
 def level1(robot):
-    while True:
-        robot.draai("links")
-        robot.kijk()
+    robot.stap(7)
+    robot.draai_kompas("zuid")
+    robot.stap(5)

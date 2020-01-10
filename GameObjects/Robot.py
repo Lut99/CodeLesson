@@ -12,6 +12,7 @@ import pygame
 from GameBase.GameObject import GameObject
 from GameBase.Sprite import Sprite
 from GameBase.GameTime import Timer
+from GameObjects.Flag import Flag
 
 
 class ProgramError(Exception):
@@ -167,7 +168,7 @@ class ExecutionThread(threading.Thread):
 # Represents the Robot (player)
 class Robot(GameObject):
     def __init__(self, program, level, pos=(0, 0), rotation="oost"):
-        super().__init__("Robot", (0, 0, 75, 75), sprite=Sprite("GameObjects/sprites/robot1.png"), rotation=rotation, crossable=False)
+        super().__init__("Robot", (pos[0], pos[1], 75, 75), sprite=Sprite("GameObjects/sprites/robot1.png"), rotation=rotation, crossable=False)
 
         self._level = level
 
@@ -199,6 +200,14 @@ class Robot(GameObject):
                 if clipped:
                     # Show a textbox
                     self.talk("Obstakel!")
+                
+                # If we're now on the flag, show the win box and done with it
+                obj = self._level.get(self.x / self._level.grid_size, self.y / self._level.grid_size)
+                if type(obj) == Flag:
+                    # We won!
+                    self._level.win()
+                    self._timer.stop()
+
             elif command == "turn":
                 # Add our direction to the current one
                 if self._program_host.to_execute[0] == "links":

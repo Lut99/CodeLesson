@@ -14,6 +14,12 @@ class Level():
         self.show_grid = show_grid
         self.grid_size = grid_size
         self.grid_dim = grid_dim
+        self.made_it = False
+        self.made_it_colour = (255, 255, 0)
+        self.colour_direction = -1
+
+        # Init the win font
+        self.font = pygame.font.SysFont("Ariel", 75, bold=True)
 
         # Load the level
         level = __import__(f"GameLevels.{level_name}", fromlist=[''])
@@ -24,12 +30,27 @@ class Level():
         robot_vec = level.load(self, self.objects, self.entities, self.grid_size, self.grid_dim)
 
         # Finally, load the robot ourselves
-        self.objects.append(Robot(__import__("puzzel", fromlist=['']).level1, self, (robot_vec[0], robot_vec[1]), robot_vec[2]))
+        self.objects.append(Robot(__import__("puzzel", fromlist=['']).level1, self, (robot_vec[0] * self.grid_size, robot_vec[1] * self.grid_size), robot_vec[2]))
 
     def update(self, gametime):
-        """ Updates all objects loaded by the current level """
-        for obj in self.objects:
-            obj.update(gametime)
+        """
+            Updates all objects loaded by the current level if the player
+            hasn't won yet. Otherwise, cycle the win colour.
+        """
+
+        if not self.made_it:
+            for obj in self.objects:
+                obj.update(gametime)
+        else:
+            r, g, b = self.made_it_colour
+            g += self.colour_direction * ((255 / 2) / gametime.updaterate)
+            if g <= 0:
+                g = 0
+                self.colour_direction = 1
+            elif g >= 255:
+                g = 255
+                self.colour_direction = -1
+            self.made_it_colour = (r, g, b)
 
     def draw(self, screen):
         """ Draws all objects and entities loaded by the current level """
@@ -45,6 +66,13 @@ class Level():
                     pygame.draw.line(screen, (0, 0, 0), (i * self.grid_size, 0), (i * self.grid_size, self.grid_dim[1] * self.grid_size))
                 if i > 0 and i < self.grid_dim[1]:
                     pygame.draw.line(screen, (0, 0, 0), (0, i * self.grid_size), (self.grid_dim[0] * self.grid_size, i * self.grid_size))
+        
+        # Overlay the win box
+        if self.made_it:
+            w, h = self.font.size("JE HEBT GEWONNEN!!")
+            upleft = (screen.get_size()[0] / 2 - w / 2 - 20, screen.get_size()[1] / 2 - h / 2 - 20)
+            pygame.draw.rect(screen, self.made_it_colour, (upleft[0], upleft[1], w + 40, h + 40))
+            screen.blit(self.font.render("JE HEBT GEWONNEN!!", False, (0, 0, 0)), (upleft[0] + 20, upleft[1] + 20))
 
     def move(self, obj, direction):
         """
@@ -109,3 +137,10 @@ class Level():
                 return obj
 
         return "Air"
+
+    def win(self):
+        """ If called, adds the win box to the level. """
+
+        self.made_it = True
+        print("\nGEFELICITEERD! Je hebt het level gehaald!")
+        print("Zet het programma uit, en open het volgende level door de naam van dat level in te voeren.")

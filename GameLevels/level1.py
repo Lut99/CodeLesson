@@ -26,4 +26,4 @@ def load(self, object_list, entity_list, grid_size, grid_dim):
     object_list.append(Flag((8 * grid_size, 6 * grid_size, grid_size, grid_size)))
 
     print("  Placing robot...")
-    return (0, 0, "oost")
+    return (1, 1, "oost")

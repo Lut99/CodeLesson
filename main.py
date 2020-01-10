@@ -24,7 +24,7 @@ def main(level_name, screen_width, screen_height, framerate, updaterate):
     pygame.font.init()
     print(" Gedaan")
 
-    print(f"\nLevel {level_name} laden...")
+    print(f"\nLevel \"{level_name}\" laden...")
     # Check if the path exists
     if not os.path.exists(f"GameLevels/{level_name}.py"):
         print(f"\nERROR: Level \"{level_name}\" is onbekend\n")
@@ -43,8 +43,6 @@ def main(level_name, screen_width, screen_height, framerate, updaterate):
     print("Initializeren van framerate & update counters...", end="")
     gtime = GameTime(framerate, updaterate)
     print(" Gedaan")
-
-    print(f"Level \"{level_name}\" laden...")
 
     # Main game loop
     print("\nGame loop...")
