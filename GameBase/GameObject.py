@@ -8,9 +8,10 @@ from GameBase.GameEntity import GameEntity
 
 
 class GameObject(GameEntity):
-    def __init__(self, rect, sprite=None, rotation="oost", crossable=True):
+    def __init__(self, name, rect, sprite=None, rotation="oost", crossable=True):
         super().__init__(rect, sprite=sprite, crossable=crossable)
 
+        self.name = name
         self.rotation = rotation
 
     def update(self, gametime, rect, rotation):

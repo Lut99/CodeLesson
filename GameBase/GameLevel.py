@@ -21,7 +21,7 @@ class Level():
         # Let the class load what they want
         self.objects = []
         self.entities = []
-        robot_vec = level.load(self, self.objects, self.entities)
+        robot_vec = level.load(self, self.objects, self.entities, self.grid_size, self.grid_dim)
 
         # Finally, load the robot ourselves
         self.objects.append(Robot(__import__("puzzel", fromlist=['']).level1, self, (robot_vec[0], robot_vec[1]), robot_vec[2]))
@@ -93,3 +93,19 @@ class Level():
         obj.y = new_y
 
         return clip
+
+    def get(self, x, y):
+        """
+            Returns the object that is at x, y in the grid. If the grid is
+            out of bounds, the string "OutOfBounds" is returned. If no
+            object is present (regardless if an entity is), return "Air".
+        """
+
+        if x < 0 or x > self.grid_dim[0] or y < 0 or y > self.grid_dim[0]:
+            return "OutOfBounds"
+
+        for obj in self.objects:
+            if obj.x == x * self.grid_size and obj.y == y * self.grid_size:
+                return obj
+
+        return "Air"

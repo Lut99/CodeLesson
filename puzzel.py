@@ -7,7 +7,5 @@
 
 def level1(robot):
     while True:
-        robot.draai_naar("west")
-        robot.stap()
-        robot.draai_naar("noord")
-        robot.stap()
+        robot.draai("links")
+        robot.kijk()

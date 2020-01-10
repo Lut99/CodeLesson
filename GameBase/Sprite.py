@@ -41,6 +41,7 @@ class Sprite():
 
         # Store the new values
         self.x, self.y, self.w, self.h = rect
+        self.rotation = rotation
 
     def draw(self, screen):
         """ Draws the sprite on stored location. """

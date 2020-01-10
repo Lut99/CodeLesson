@@ -2,10 +2,41 @@
 #   by Lut99
 #
 # Class die de tijd bijhoudt en bepaald wanneer een object moet worden
-#   getekend of geupdate. Daarnaast kan het ook worden gebruikt om te kijken
-#   of er een seconde voorbij is gegaan.
+#   getekend of geupdate. Daarnaast kun je ook timers laten runnen om te testen
+#   of er een specifiek tijdstip voorbij is gegaan.
+#
+# NOTE: Verander niks aan dit bestand!
 
 import time
+
+
+class Timer():
+    def __init__(self, target_timeout):
+        self._target = time.time() + target_timeout
+        self._timeout = target_timeout
+
+    def reset(self, relative=False):
+        """
+            Resets the timer to time.time() + self._timeout again. If relative
+            is set to True, then the timer is set to
+            self._target += self._timeout. The last option is more precise, but
+            can easily start to lag behind.
+        """
+
+        self._target = time.time() + self._timeout
+
+    def new_target(self, target_timeout):
+        """ Resets the timer to a new timeout time """
+        self._target = time.time() + target_timeout
+        self._timeout = target_timeout
+
+    def stop(self):
+        """ Disables the timer so that it never occurs """
+        self._target = float("inf")
+
+    def start(self):
+        """ Same as non-relative reset """
+        self.reset()
 
 
 class GameTime():
@@ -57,23 +88,18 @@ class GameTime():
             return True
         return False
 
-    def check_second(self):
+    def set_timer(self, seconds_to_go):
         """
-            check_second() returns true if a second has passed. Returns True if
-            it is, or False if it isn't. Note that this isn't relative to the
-            previous call, but rather to the start time of the class.
-        """
-
-        time_passed = time.time() - self._start_time
-        second_offset = time_passed - int(time_passed)
-
-        # Return whether a whole second has passed since the start of the class
-        return second_offset < 0.01
-
-    def get_seconds(self):
-        """
-            get_seconds() returns the (whole) number of seconds that the class
-            has been alive.
+            Returns a timer object that can be used to check if the given
+            amount of seconds has passed.
         """
 
-        return int(time.time() - self._start_time)
+        return Timer(seconds_to_go)
+
+    def check_timer(self, timer):
+        """
+            Checks if given timer objects has timed out. Cannot be used again,
+            unless .reset() is called on the timer.
+        """
+
+        return time.time() >= timer._target

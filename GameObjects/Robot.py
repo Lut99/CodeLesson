@@ -11,6 +11,11 @@ import pygame
 
 from GameBase.GameObject import GameObject
 from GameBase.Sprite import Sprite
+from GameBase.GameTime import Timer
+
+
+class ProgramError(Exception):
+    pass
 
 
 class Program:
@@ -60,28 +65,9 @@ class Program:
                 while self.state != "idle":
                     pass
         else:
-            self.to_execute = ("error", "(stap) Het aantal stappen moet een geheel, positief getal zijn")
+            self.to_execute = ("error", "robot.stap(): Het aantal stappen moet een geheel, positief getal zijn")
             self.state = "executing"
-
-            # Wait until we're idle
-            while self.state != "idle":
-                pass
-
-    def pak_vast(self):
-        """
-            Grabs something that is in front of the robot. If there is nothing,
-            nothing is grabbed.
-        """
-
-        pass
-
-    def laat_los(self):
-        """
-            Lets whatever the robot is holding go. If he is holding nothing,
-            nothing is dropped.
-        """
-
-        pass
+            raise ProgramError()
 
     def draai(self, direction):
         """
@@ -98,14 +84,15 @@ class Program:
             self.to_execute = ("turn", direction)
             self.state = "executing"
         else:
-            self.to_execute = ("error", f"(draai) Onbekende richting '{direction}'")
+            self.to_execute = ("error", f"robot.draai(): Onbekende richting '{direction}'")
             self.state = "executing"
+            raise ProgramError()
 
         # Wait until we're idle
         while self.state != "idle":
             pass
 
-    def draai_naar(self, direction):
+    def draai_kompas(self, direction):
         """
             Turns the robot to the specified direction. This is absolute, not
             relative to the current rotation. Rotation values are: 'noord',
@@ -118,11 +105,12 @@ class Program:
 
         # Either do the instruction or print an error
         if direction in ["noord", "oost", "zuid", "west"]:
-            self.to_execute = ("turn_to", direction)
+            self.to_execute = ("turn_compass", direction)
             self.state = "executing"
         else:
-            self.to_execute = ("error", f"(draai_naar) Onbekende richting '{direction}'")
+            self.to_execute = ("error", f"robot.draai_kompas(): Onbekende richting '{direction}'")
             self.state = "executing"
+            raise ProgramError()
 
         # Wait until we're idle
         while self.state != "idle":
@@ -133,7 +121,18 @@ class Program:
             Geeft terug wat er voor de robot staat.
         """
 
-        pass
+        # Wait until we're idle
+        while self.state != "idle":
+            pass
+
+        # Set the instruction, then wait for idle to return
+        self.to_execute = tuple(["look"])
+        self.state = "executing"
+
+        while self.state != "idle":
+            pass
+
+        return self.result
 
 
 class ExecutionThread(threading.Thread):
@@ -156,7 +155,11 @@ class ExecutionThread(threading.Thread):
     def run(self):
         self.running = True
 
-        self._to_exec(self._program)
+        try:
+            self._to_exec(self._program)
+        except ProgramError:
+            # Hides the actual traceback and stuff
+            pass
 
         self.running = False
 
@@ -164,7 +167,7 @@ class ExecutionThread(threading.Thread):
 # Represents the Robot (player)
 class Robot(GameObject):
     def __init__(self, program, level, pos=(0, 0), rotation="oost"):
-        super().__init__((0, 0, 75, 75), sprite=Sprite("GameObjects/sprites/robot1.png"), rotation=rotation, crossable=False)
+        super().__init__("Robot", (0, 0, 75, 75), sprite=Sprite("GameObjects/sprites/robot1.png"), rotation=rotation, crossable=False)
 
         self._level = level
 
@@ -176,6 +179,9 @@ class Robot(GameObject):
 
         # Run it
         execution.start()
+
+        # Declare the second timer
+        self._timer = Timer(1)
 
         # Text ballon visibility indicator
         self.show_text = None
@@ -195,19 +201,59 @@ class Robot(GameObject):
                     self.talk("Obstakel!")
             elif command == "turn":
                 # Add our direction to the current one
-
-            elif command == "turn_to":
+                if self._program_host.to_execute[0] == "links":
+                    # Turn left
+                    directions = ["noord", "west", "zuid", "oost"]
+                    self.rotation = directions[(directions.index(self.rotation) + 1) % len(directions)]
+                else:
+                    # Turn right
+                    directions = ["noord", "oost", "zuid", "west"]
+                    self.rotation = directions[(directions.index(self.rotation) + 1) % len(directions)]
+            elif command == "turn_compass":
                 # Turn to the given direction
                 self.rotation = self._program_host.to_execute[1]
+            elif command == "look":
+                # Compute grid coordinates of what is in front of us
+                x = int(self.x / self._level.grid_size)
+                y = int(self.y / self._level.grid_size)
+                if self.rotation == "noord":
+                    y -= 1
+                elif self.rotation == "oost":
+                    x += 1
+                elif self.rotation == "zuid":
+                    y += 1
+                elif self.rotation == "west":
+                    x -= 1
+
+                # Get what is in front of us, then return that in the return var
+                obj = self._level.get(x, y)
+                if obj == "OutOfBounds":
+                    self.talk("Ik zie: Rand")
+                    self._program_host.result = obj
+                elif obj == "Air":
+                    self.talk("Ik zie: Niks")
+                    self._program_host.result = obj
+                else:
+                    self.talk(f"Ik zie: {obj.name}")
+                    self._program_host.result = obj.name
+            elif command == "error":
+                # Display the error so the kids know something is up, and
+                #   freeze the timer. The Program thread should have killed
+                #   itself.
+                self.talk("ERROR")
+                print(f"ERROR: {self._program_host.to_execute[1]}")
+                self._timer.stop()
 
             # Set it to waiting
             self._program_host.state = "waiting"
         elif self._program_host.state == "waiting":
             # Check if a second has passed
-            if gametime.check_second():
+            if gametime.check_timer(self._timer):
                 self._program_host.state = "idle"
                 # Also reset any text boxes
                 self.show_text = None
+                # And reset the timer
+                self._timer.reset()
 
         # Propagate the position once all changes have been made
         super().update(gametime, (self.x, self.y, self.w, self.h), self.rotation)

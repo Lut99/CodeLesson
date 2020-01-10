@@ -14,6 +14,8 @@ import pygame
 class GameEntity():
     def __init__(self, rect, sprite=None, crossable=True):
         self._sprite = sprite
+        self._sprite.x = rect[0]
+        self._sprite.y = rect[1]
 
         self.x, self.y, self.w, self.h = rect
 
