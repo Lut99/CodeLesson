@@ -14,7 +14,7 @@ class Level():
         self.show_grid = show_grid
         self.screen_size = screen_size
         self.grid_size = grid_size
-        self.square_size = (self.screen_size[0] / self.grid_size[0], self.screen_size[1] / self.grid_size[1])
+        self.square_size = (int(self.screen_size[0] / self.grid_size[0]), int(self.screen_size[1] / self.grid_size[1]))
         self.made_it = False
         self.made_it_colour = (255, 255, 0)
         self.colour_direction = -1

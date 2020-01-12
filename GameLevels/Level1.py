@@ -16,10 +16,10 @@ def load(self, object_list, entity_list, grid_size, square_size):
 
     # Load grass on every grid
     print(f"  Creating background...")
-    for y in range(0, grid_size[1] * square_size[1], square_size[1]):
-        for x in range(0, grid_size[0] * square_size[0], square_size[0]):
+    for y in range(grid_size[1]):
+        for x in range(grid_size[0]):
             entity_list.append(
-                Grass((x, y, grid_size, grid_size))
+                Grass((x * square_size[0], y * square_size[1], square_size[0], square_size[1]))
             )
 
     print("  Placing flag...")
