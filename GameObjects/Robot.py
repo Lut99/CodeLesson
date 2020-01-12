@@ -41,34 +41,25 @@ class Program:
         self.state = "waiting"
         self.result = None
 
-    def stap(self, amount=1):
+    def stap(self):
         """
-            Makes the robot walk amount steps in the direction he is pointing
-            at at the moment.
+            Makes the robot walk 1 step in the direction he is pointing at at
+            the moment.
         """
 
         # Wait until we're idle
         while self.state != "idle":
             pass
 
-        # Check if int
-        if type(amount) == int and amount >= 0:
-            for i in range(amount):
-                # Wait until we're idle
+        # Set the to be executed program
+        self.to_execute = tuple(["step"])
 
-                # Set the to be executed program
-                self.to_execute = tuple(["step"])
+        # Update the state
+        self.state = "executing"
 
-                # Update the state
-                self.state = "executing"
-
-                # Wait until we're idle
-                while self.state != "idle":
-                    pass
-        else:
-            self.to_execute = ("error", "robot.stap(): Het aantal stappen moet een geheel, positief getal zijn")
-            self.state = "executing"
-            raise ProgramError()
+        # Wait until we're idle
+        while self.state != "idle":
+            pass
 
     def draai(self, direction):
         """

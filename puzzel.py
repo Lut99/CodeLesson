@@ -7,8 +7,4 @@
 
 def Level1(robot):
     while True:
-        obj = robot.kijk()
-        if obj == "Rand":
-            robot.draai("rechts")
-        else:
-            robot.stap()
+        robot.stap()

@@ -21,7 +21,7 @@ GRID_SIZE = 75
 
 def main(framerate, updaterate):
     print("\nInitializeren van PyGame...", end="")
-    pygame.init()
+    pygame.display.init()
     pygame.font.init()
     print(" Gedaan")
 
@@ -34,37 +34,14 @@ def main(framerate, updaterate):
     gtime = GameTime(framerate, updaterate)
     print(" Gedaan")
 
-    # print("\nLaden van level selector...")
-    # selector = LevelSelector()
-    # print("Level selector geladen.")
-
-    # print("\nWachten tot een level is gekozen...")
-    # level_name = selector.select()
-    # if level_name == "None":
-    #     # No level has been chosen
-    #     print("\nGeen level gekozen.\n\nBye.\n")
-    #     pygame.quit()
-    #     sys.exit()
-    # print(f"Gekozen level: {level_name}")
-
-    # print(f"\nLevel \"{level_name}\" laden...")
-    # # Check if the path exists
-    # if not os.path.exists(f"GameLevels/{level_name}.py"):
-    #     print(f"\nERROR: Level \"{level_name}\" is onbekend\n")
-    #     pygame.quit()
-    #     sys.exit()
-
-    # # If it does, load it
-    # level = Level(level_name, grid_size=GRID_SIZE, grid_dim=(12 * GRID_SIZE, 8 * GRID_SIZE), show_grid=False)
-    # print("Level laden voltooid")
-
     print("\nLaden van level selector...")
     level = LevelSelector()
     print("Level selector geladen.")
 
     # Main game loop
     print("\nGame loop...")
-    while True:
+    running = True
+    while running:
         for event in pygame.event.get():
             if event.type == pygame.KEYUP:
                 if type(level) == LevelSelector:
@@ -87,9 +64,8 @@ def main(framerate, updaterate):
                         level = Level(level_name, grid_size=GRID_SIZE, grid_dim=(12, 8), show_grid=False)
                         print(f"\nLevel: \"{level_name}\" geladen")
             elif event.type == pygame.QUIT:
-                print("\nBye.\n")
-                pygame.quit()
-                sys.exit()
+                running = False
+                break
 
         if gtime.check_framerate():
             # Clear the screen
@@ -98,13 +74,15 @@ def main(framerate, updaterate):
             # Draw the level
             level.draw(screen)
 
+            # Update the display
+            pygame.display.update()
+
         if gtime.check_update():
             # Update the level
             level.update(gtime)
 
-        # Update the display
-        pygame.display.update()
-
+    print("\nBye.\n")
+    pygame.quit()
 
 if __name__ == "__main__":
     # Get arguments
