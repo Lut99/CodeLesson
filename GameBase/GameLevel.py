@@ -30,7 +30,7 @@ class Level():
         robot_vec = level.load(self, self.objects, self.entities, self.grid_size, self.grid_dim)
 
         # Finally, load the robot ourselves
-        self.objects.append(Robot(__import__("puzzel", fromlist=['']).level1, self, (robot_vec[0] * self.grid_size, robot_vec[1] * self.grid_size), robot_vec[2]))
+        self.objects.append(Robot(getattr(__import__("puzzel", fromlist=['']), level_name), self, (robot_vec[0] * self.grid_size, robot_vec[1] * self.grid_size), robot_vec[2]))
 
     def update(self, gametime):
         """
