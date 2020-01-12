@@ -6,5 +6,8 @@
 
 
 def Level1(robot):
-    while True:
-        robot.stap()
+    # VANAF HIER
+
+    robot.stap()
+
+    # TOT HIER
