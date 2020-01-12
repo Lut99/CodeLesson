@@ -17,6 +17,7 @@ from GameBase.GameLevel import Level
 from GameLevels.LevelSelector import LevelSelector
 
 GRID_SIZE = 75
+GRID_DIM = (10, 5)
 
 
 def main(framerate, updaterate):
@@ -26,7 +27,7 @@ def main(framerate, updaterate):
     print(" Gedaan")
 
     print("\nInitializeren van scherm...", end="")
-    screen = pygame.display.set_mode((12 * GRID_SIZE, 8 * GRID_SIZE))
+    screen = pygame.display.set_mode((GRID_DIM[0] * GRID_SIZE, GRID_DIM[1] * GRID_SIZE))
     pygame.display.set_caption("Puzzel")
     print(" Gedaan")
 
@@ -61,7 +62,7 @@ def main(framerate, updaterate):
                         # Enter has been pressed: switch to the selected level
                         level_name = level.levels[level.selected].name
                         print(f"\nGekozen level: \"{level_name}\" laden...")
-                        level = Level(level_name, grid_size=GRID_SIZE, grid_dim=(12, 8), show_grid=False)
+                        level = Level(level_name, grid_size=GRID_SIZE, grid_dim=GRID_DIM, show_grid=False)
                         print(f"\nLevel: \"{level_name}\" geladen")
             elif event.type == pygame.QUIT:
                 running = False
