@@ -158,8 +158,8 @@ class ExecutionThread(threading.Thread):
 
 # Represents the Robot (player)
 class Robot(GameObject):
-    def __init__(self, program, level, pos=(0, 0), rotation="oost"):
-        super().__init__("Robot", (pos[0], pos[1], 75, 75), sprite=Sprite("GameObjects/sprites/robot1.png"), rotation=rotation, crossable=False)
+    def __init__(self, program, level, pos=(0, 0), square_size=(75, 75), rotation="oost"):
+        super().__init__("Robot", (pos[0], pos[1], square_size[0], square_size[1]), sprite=Sprite("GameObjects/sprites/robot1.png"), rotation=rotation, crossable=False)
 
         self._level = level
 
@@ -193,7 +193,7 @@ class Robot(GameObject):
                     self.talk("Obstakel!")
 
                 # If we're now on the flag, show the win box and done with it
-                obj = self._level.get(self.x / self._level.grid_size, self.y / self._level.grid_size)
+                obj = self._level.get(self.x / self._level.square_size[0], self.y / self._level.square_size[1])
                 if type(obj) == Flag:
                     # We won!
                     self._level.win()
@@ -214,8 +214,8 @@ class Robot(GameObject):
                 self.rotation = self._program_host.to_execute[1]
             elif command == "look":
                 # Compute grid coordinates of what is in front of us
-                x = int(self.x / self._level.grid_size)
-                y = int(self.y / self._level.grid_size)
+                x = int(self.x / self._level.square_size[0])
+                y = int(self.y / self._level.square_size[1])
                 if self.rotation == "noord":
                     y -= 1
                 elif self.rotation == "oost":

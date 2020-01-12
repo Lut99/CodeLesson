@@ -8,7 +8,7 @@ from GameEntities.Grass import Grass
 from GameObjects.Flag import Flag
 
 
-def load(self, object_list, entity_list, grid_size, grid_dim):
+def load(self, object_list, entity_list, grid_size, square_size):
     """
         Load all required objects and sprites. Also loads the puzzel file with
         the program the robot executes
@@ -16,14 +16,14 @@ def load(self, object_list, entity_list, grid_size, grid_dim):
 
     # Load grass on every grid
     print(f"  Creating background...")
-    for y in range(0, grid_dim[1] * grid_size, grid_size):
-        for x in range(0, grid_dim[0] * grid_size, grid_size):
+    for y in range(0, grid_size[1] * square_size[1], square_size[1]):
+        for x in range(0, grid_size[0] * square_size[0], square_size[0]):
             entity_list.append(
                 Grass((x, y, grid_size, grid_size))
             )
 
     print("  Placing flag...")
-    object_list.append(Flag((8 * grid_size, 6 * grid_size, grid_size, grid_size)))
+    object_list.append(Flag((8 * square_size[0], 6 * square_size[1], square_size[0], square_size[1])))
 
     print("  Placing robot...")
     return (1, 1, "oost")

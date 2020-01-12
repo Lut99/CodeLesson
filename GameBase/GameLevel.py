@@ -10,10 +10,11 @@ from GameObjects.Robot import Robot
 
 
 class Level():
-    def __init__(self, level_name, grid_size=75, grid_dim=(12, 8), show_grid=False):
+    def __init__(self, level_name, screen_size=(800, 600), grid_size=(10, 8), show_grid=False):
         self.show_grid = show_grid
+        self.screen_size = screen_size
         self.grid_size = grid_size
-        self.grid_dim = grid_dim
+        self.square_size = (self.screen_size[0] / self.grid_size[0], self.screen_size[1] / self.grid_size[1])
         self.made_it = False
         self.made_it_colour = (255, 255, 0)
         self.colour_direction = -1
@@ -27,10 +28,14 @@ class Level():
         # Let the class load what they want
         self.objects = []
         self.entities = []
-        robot_vec = level.load(self, self.objects, self.entities, self.grid_size, self.grid_dim)
+        robot_vec = level.load(self, self.objects, self.entities, self.grid_size, self.square_size)
 
         # Finally, load the robot ourselves
-        self.objects.append(Robot(getattr(__import__("puzzel", fromlist=['']), level_name), self, (robot_vec[0] * self.grid_size, robot_vec[1] * self.grid_size), robot_vec[2]))
+        self.objects.append(Robot(getattr(__import__("puzzel", fromlist=['']), level_name),
+                            self,
+                            pos=(robot_vec[0] * self.square_size[0], robot_vec[1] * self.square_size[1]),
+                            square_size=self.square_size,
+                            rotation=robot_vec[2]))
 
     def update(self, gametime):
         """
@@ -61,11 +66,11 @@ class Level():
 
         # If given, also print the grid
         if self.show_grid:
-            for i in range(0, max(self.grid_dim)):
-                if i > 0 and i < self.grid_dim[0]:
-                    pygame.draw.line(screen, (0, 0, 0), (i * self.grid_size, 0), (i * self.grid_size, self.grid_dim[1] * self.grid_size))
-                if i > 0 and i < self.grid_dim[1]:
-                    pygame.draw.line(screen, (0, 0, 0), (0, i * self.grid_size), (self.grid_dim[0] * self.grid_size, i * self.grid_size))
+            for i in range(0, max(self.grid_size)):
+                if i > 0 and i < self.grid_size[0]:
+                    pygame.draw.line(screen, (0, 0, 0), (i * self.square_size[0], 0), (i * self.square_size[0], self.grid_size[1] * self.square_size[1]))
+                if i > 0 and i < self.grid_size[1]:
+                    pygame.draw.line(screen, (0, 0, 0), (0, i * self.square_size[1]), (self.grid_size[0] * self.square_size[0], i * self.square_size[1]))
 
         # Overlay the win box
         if self.made_it:
@@ -86,22 +91,22 @@ class Level():
 
         clip = False
         if direction == "noord":
-            new_y -= self.grid_size
+            new_y -= self.square_size[1]
             if new_y < 0:
                 new_y = 0
                 clip = True
         elif direction == "oost":
-            new_x += self.grid_size
-            if new_x > (self.grid_dim[0] - 1) * self.grid_size:
-                new_x = (self.grid_dim[0] - 1) * self.grid_size
+            new_x += self.square_size[0]
+            if new_x > (self.grid_size[0] - 1) * self.square_size[0]:
+                new_x = (self.grid_size[0] - 1) * self.square_size[0]
                 clip = True
         elif direction == "zuid":
-            new_y += self.grid_size
-            if new_y > (self.grid_dim[1] - 1) * self.grid_size:
-                new_y = (self.grid_dim[1] - 1) * self.grid_size
+            new_y += self.square_size[1]
+            if new_y > (self.grid_size[1] - 1) * self.square_size[1]:
+                new_y = (self.grid_size[1] - 1) * self.square_size[1]
                 clip = True
         elif direction == "west":
-            new_x -= self.grid_size
+            new_x -= self.square_size[0]
             if new_x < 0:
                 new_x = 0
                 clip = True
@@ -129,11 +134,11 @@ class Level():
             object is present (regardless if an entity is), return "Air".
         """
 
-        if x < 0 or x >= self.grid_dim[0] or y < 0 or y >= self.grid_dim[1]:
+        if x < 0 or x >= self.grid_size[0] or y < 0 or y >= self.grid_size[1]:
             return "OutOfBounds"
 
         for obj in self.objects:
-            if obj.x == x * self.grid_size and obj.y == y * self.grid_size:
+            if obj.x == x * self.square_size[0] and obj.y == y * self.square_size[1]:
                 return obj
 
         return "Air"
