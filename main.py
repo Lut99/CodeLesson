@@ -17,7 +17,7 @@ from GameBase.GameLevel import Level
 from GameLevels.LevelSelector import LevelSelector
 
 GRID_SIZE = 75
-GRID_DIM = (10, 5)
+GRID_DIM = (10, 8)
 
 
 def main(framerate, updaterate):
