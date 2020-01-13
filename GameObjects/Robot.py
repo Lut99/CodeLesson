@@ -217,12 +217,25 @@ class Robot(GameObject):
                 # Add our direction to the current one
                 if self._program_host.to_execute[0] == "links":
                     # Turn left
-                    directions = ["noord", "west", "zuid", "oost"]
-                    self.rotation = directions[(directions.index(self.rotation) + 1) % len(directions)]
+                    if self.rotation == "noord":
+                        self.rotation = "oost"
+                    elif self.rotation == "oost":
+                        self.rotation = "zuid"
+                    elif self.rotation == "zuid":
+                        self.rotation = "west"
+                    elif self.rotation == "west":
+                        self.rotation = "noord"
                 else:
                     # Turn right
-                    directions = ["noord", "oost", "zuid", "west"]
-                    self.rotation = directions[(directions.index(self.rotation) + 1) % len(directions)]
+                    if self.rotation == "noord":
+                        self.rotation = "west"
+                    elif self.rotation == "oost":
+                        self.rotation = "noord"
+                    elif self.rotation == "zuid":
+                        self.rotation = "oost"
+                    elif self.rotation == "west":
+                        self.rotation = "zuid"
+
             elif command == "turn_compass":
                 # Turn to the given direction
                 self.rotation = self._program_host.to_execute[1]
