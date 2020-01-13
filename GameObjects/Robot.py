@@ -126,6 +126,20 @@ class Program:
 
         return self.result
 
+    def error(self, message):
+        """
+            Lets the robot spit out a custom error.
+        """
+
+        # Wait until we're idle
+        while self.state != "idle":
+            pass
+
+        # Set the instruction, then wait for idle to return
+        self.to_execute = ("error", message)
+        self.state = "executing"
+        raise ProgramError()
+
 
 class ExecutionThread(threading.Thread):
     """

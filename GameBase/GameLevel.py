@@ -9,6 +9,12 @@ import pygame
 from GameObjects.Robot import Robot
 
 
+err_message = "NONE"
+def error_level(robot):
+    global err_message
+    robot.error(err_message)
+
+
 class Level():
     def __init__(self, level_name, screen_size=(800, 600), grid_size=(10, 8), show_grid=False):
         self.show_grid = show_grid
@@ -30,12 +36,24 @@ class Level():
         self.entities = []
         robot_vec = level.load(self, self.objects, self.entities, self.grid_size, self.square_size)
 
+        # Load the robot program
+        prgr = None
+        try:
+            prgr = getattr(__import__("puzzel", fromlist=['']), level_name)
+        except Exception as e:
+            # Init the robot with a program that errors
+            global err_message
+            err_message = f"laden van {level_name}: {str(e)}"
+            prgr = error_level
+
         # Finally, load the robot ourselves
-        self.objects.append(Robot(getattr(__import__("puzzel", fromlist=['']), level_name),
-                            self,
-                            pos=(robot_vec[0] * self.square_size[0], robot_vec[1] * self.square_size[1]),
-                            square_size=self.square_size,
-                            rotation=robot_vec[2]))
+        self.objects.append(
+            Robot(prgr,
+                  self,
+                  pos=(robot_vec[0] * self.square_size[0], robot_vec[1] * self.square_size[1]),
+                  square_size=self.square_size,
+                  rotation=robot_vec[2])
+        )
 
     def update(self, gametime):
         """
