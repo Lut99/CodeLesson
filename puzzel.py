@@ -9,6 +9,5 @@ def Level1(robot):
     # VANAF HIER
 
     robot.stap()
-    robot.st(
 
     # TOT HIER
