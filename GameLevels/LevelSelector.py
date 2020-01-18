@@ -20,6 +20,9 @@ class LevelChoice():
         self.tw, self.th = self.font.size(self.name)
         self.w, self.h = self.tw + 20, self.th + 20
 
+    def __lt__(self, other):
+        return self.name < other.name
+
 
 class LevelSelector():
     def __init__(self):
@@ -45,6 +48,9 @@ class LevelSelector():
             if f != "LevelSelector.py" and f[-3:] == ".py":
                 # We found a level file
                 self.levels.append(LevelChoice(f[:-3], self.font_level))
+
+        # Sort that list alphabetically
+        self.levels.sort()
 
         # Initialize self.selected to first value (by default)
         self.selected = 0

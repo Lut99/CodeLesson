@@ -22,27 +22,46 @@ def Level1(robot):
 def Level2(robot):
     # VANAF HIER
 
-    for i in range(6):
-        robot.stap()
-    robot.draai("rechts")
-
     while True:
         obj = robot.kijk()
-        if obj == "Vlag":
+        if obj == "vlag":
             robot.stap()
             break
         robot.stap()
 
     # TOT HIER
 
+
 def Level3(robot):
+    # VANAF HIER
+
+    while True:
+        obj = robot.kijk()
+        if obj == "struik":
+            robot.draai("rechts")
+            break
+        robot.stap()
+
+    while True:
+        obj = robot.kijk()
+        if obj == "vlag":
+            robot.stap()
+            break
+        robot.stap()
+
+    # TOT HIER
+
+
+def Level4(robot):
     x, y = robot.kijk_vlag()
 
     # VANAF HIER
 
     for i in range(x - 2):
         robot.stap()
+
     robot.draai("rechts")
+
     for i in range(y - 2):
         robot.stap()
 

@@ -198,7 +198,7 @@ class ExecutionThread(threading.Thread):
 # Represents the Robot (player)
 class Robot(GameObject):
     def __init__(self, program, level, pos=(0, 0), square_size=(75, 75), rotation="oost"):
-        super().__init__("Robot", (pos[0], pos[1], square_size[0], square_size[1]), sprite=Sprite("GameObjects/sprites/robot.png"), rotation=rotation, crossable=False)
+        super().__init__("robot", (pos[0], pos[1], square_size[0], square_size[1]), sprite=Sprite("GameObjects/sprites/robot.png"), rotation=rotation, crossable=False)
 
         self._level = level
 

@@ -4,7 +4,7 @@
 # Created:
 #   1/18/2020, 1:07:59 PM
 # Last edited:
-#   1/18/2020, 1:16:17 PM
+#   1/18/2020, 2:28:59 PM
 # Auto updated?
 #   Yes
 #
@@ -21,7 +21,7 @@ from GameBase.Sprite import Sprite
 
 class Bush(GameObject):
     def __init__(self, rect):
-        super().__init__("Struik", rect, sprite=Sprite("GameObjects/sprites/bush.png"), crossable=False)
+        super().__init__("struik", rect, sprite=Sprite("GameObjects/sprites/bush.png"), crossable=False)
 
     def update(self, gametime):
         super().update(self, (self.x, self.y, self.w, self.h), self.rotation)

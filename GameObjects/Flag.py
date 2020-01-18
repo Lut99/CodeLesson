@@ -16,7 +16,7 @@ class Flag(GameObject):
         self._sprite1 = Sprite("GameObjects/sprites/flag1.png")
         self._sprite2 = Sprite("GameObjects/sprites/flag2.png")
 
-        super().__init__("Vlag", rect, sprite=self._sprite1)
+        super().__init__("vlag", rect, sprite=self._sprite1)
 
         self._timer = Timer(0.5)
 

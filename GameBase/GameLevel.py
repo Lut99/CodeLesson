@@ -183,4 +183,4 @@ class Level():
 
         self.made_it = True
         print("\nGEFELICITEERD! Je hebt het level gehaald!")
-        print("Zet het programma uit, en open het volgende level door de naam van dat level in te voeren.")
+        print("Zet het programma uit en open het opnieuw om het volgende level te kiezen.")

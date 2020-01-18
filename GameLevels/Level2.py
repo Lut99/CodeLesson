@@ -4,7 +4,7 @@
 # Created:
 #   1/18/2020, 1:02:59 PM
 # Last edited:
-#   1/18/2020, 2:10:25 PM
+#   1/18/2020, 2:26:47 PM
 # Auto updated?
 #   Yes
 #
@@ -46,7 +46,7 @@ def load(self, object_list, entity_list, grid_size, square_size):
 
     # Place the flag
     print("  Placing flag...")
-    object_list.append(Flag((7 * square_size[0], random.randint(3, 6) * square_size[1], square_size[0], square_size[1])))
+    object_list.append(Flag((random.randint(2, 7) * square_size[0], square_size[1], square_size[0], square_size[1])))
 
     # Place the robot
     return (1, 1, "oost")
