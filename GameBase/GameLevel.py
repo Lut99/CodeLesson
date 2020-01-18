@@ -7,6 +7,7 @@
 import pygame
 
 from GameObjects.Robot import Robot
+from GameObjects.Flag import Flag
 
 
 err_message = "NONE"
@@ -131,14 +132,6 @@ class Level():
         else:
             raise ValueError("direction can only be 'noord', 'oost', 'zuid' or 'west'")
 
-        # Check if anything is already here that is not-crossable
-        for obj_2 in self.objects:
-            if obj_2.x == new_x and obj_2.y == new_y and not obj_2.crossable:
-                return True
-        for ent in self.entities:
-            if ent.x == new_x and ent.y == new_y and not ent.crossable:
-                return True
-        
         # If there isn't update the value
         obj.x = new_x
         obj.y = new_y
@@ -160,6 +153,30 @@ class Level():
                 return obj
 
         return "Air"
+
+    def get_flag(self):
+        """
+            Returns the position of the Flag object
+        """
+
+        for obj in self.objects:
+            if type(obj) == Flag:
+                return (int(obj.x / self.square_size[0]) + 1, int(obj.y / self.square_size[1]) + 1)
+        return (-1, -1)
+
+    def get_robot_pos(self):
+        """
+            Same as get, except that it always looks at the spot the robot is
+            currently standing.
+        """
+
+        robot = None
+        for obj in self.objects:
+            if type(obj) == Robot:
+                robot = obj
+                break
+
+        return self.get(robot.x / self.square_size[0], robot.y / self.square_size[1])
 
     def win(self):
         """ If called, adds the win box to the level. """

@@ -126,6 +126,24 @@ class Program:
 
         return self.result
 
+    def kijk_vlag(self):
+        """
+            Geeft de positie (x, y) van de vlag terug.
+        """
+
+        # Wait until we're idle
+        while self.state != "idle":
+            pass
+
+        # Set the instruction, then wait for idle to return
+        self.to_execute = tuple(["look_flag"])
+        self.state = "executing"
+
+        while self.state != "idle":
+            pass
+
+        return self.result
+
     def error(self, message):
         """
             Lets the robot spit out a custom error.
@@ -150,13 +168,14 @@ class ExecutionThread(threading.Thread):
         thing is handle
     """
 
-    def __init__(self, program, func):
+    def __init__(self, program, func, level):
         threading.Thread.__init__(self, daemon=True)
 
         self.running = False
 
         self._to_exec = func
         self._program = program
+        self._level = level
 
     def run(self):
         self.running = True
@@ -167,13 +186,19 @@ class ExecutionThread(threading.Thread):
             # Hides the actual traceback and stuff
             pass
 
+        # Check if the robot is done now
+        obj = self._level.get_robot_pos()
+        if type(obj) == Flag:
+            # We won!
+            self._level.win()
+
         self.running = False
 
 
 # Represents the Robot (player)
 class Robot(GameObject):
     def __init__(self, program, level, pos=(0, 0), square_size=(75, 75), rotation="oost"):
-        super().__init__("Robot", (pos[0], pos[1], square_size[0], square_size[1]), sprite=Sprite("GameObjects/sprites/robot1.png"), rotation=rotation, crossable=False)
+        super().__init__("Robot", (pos[0], pos[1], square_size[0], square_size[1]), sprite=Sprite("GameObjects/sprites/robot.png"), rotation=rotation, crossable=False)
 
         self._level = level
 
@@ -181,7 +206,7 @@ class Robot(GameObject):
         self._program_host = Program()
 
         # Create the thread
-        execution = ExecutionThread(self._program_host, program)
+        execution = ExecutionThread(self._program_host, program, level)
 
         # Run it
         execution.start()
@@ -204,37 +229,37 @@ class Robot(GameObject):
                 clipped = self._level.move(self, self.rotation)
                 if clipped:
                     # Show a textbox
-                    self.talk("Obstakel!")
+                    self.talk("Rand!")
 
-                # If we're now on the flag, show the win box and done with it
-                obj = self._level.get(self.x / self._level.square_size[0], self.y / self._level.square_size[1])
-                if type(obj) == Flag:
-                    # We won!
-                    self._level.win()
+                # If the robot hit a non-crossable object, error cuz it's stuck
+                obj = self._level.get_robot_pos()
+                if type(obj) != str and obj != self and not obj.crossable:
+                    self.talk("ERROR")
+                    print(f"ERROR: De robot zit vast in {obj.name}")
                     self._timer.stop()
 
             elif command == "turn":
                 # Add our direction to the current one
-                if self._program_host.to_execute[0] == "links":
+                if self._program_host.to_execute[1] == "links":
                     # Turn left
                     if self.rotation == "noord":
-                        self.rotation = "oost"
-                    elif self.rotation == "oost":
-                        self.rotation = "zuid"
-                    elif self.rotation == "zuid":
                         self.rotation = "west"
-                    elif self.rotation == "west":
+                    elif self.rotation == "oost":
                         self.rotation = "noord"
+                    elif self.rotation == "zuid":
+                        self.rotation = "oost"
+                    elif self.rotation == "west":
+                        self.rotation = "zuid"
                 else:
                     # Turn right
                     if self.rotation == "noord":
-                        self.rotation = "west"
-                    elif self.rotation == "oost":
-                        self.rotation = "noord"
-                    elif self.rotation == "zuid":
                         self.rotation = "oost"
-                    elif self.rotation == "west":
+                    elif self.rotation == "oost":
                         self.rotation = "zuid"
+                    elif self.rotation == "zuid":
+                        self.rotation = "west"
+                    elif self.rotation == "west":
+                        self.rotation = "noord"
 
             elif command == "turn_compass":
                 # Turn to the given direction
@@ -263,6 +288,12 @@ class Robot(GameObject):
                 else:
                     self.talk(f"Ik zie: {obj.name}")
                     self._program_host.result = obj.name
+            elif command == "look_flag":
+                # Return the flag position
+                self._program_host.result = self._level.get_flag()
+
+                # Also speak it for niceness
+                self.talk(f"Vlag op ({self._program_host.result[0]},{self._program_host.result[1]})")
             elif command == "error":
                 # Display the error so the kids know something is up, and
                 #   freeze the timer. The Program thread should have killed
