@@ -280,11 +280,11 @@ class Robot(GameObject):
                 # Get what is in front of us, then return that in the return var
                 obj = self._level.get(x, y)
                 if obj == "OutOfBounds":
-                    self.talk("Ik zie: Rand")
-                    self._program_host.result = "Rand"
+                    self.talk("Ik zie: rand")
+                    self._program_host.result = "rand"
                 elif obj == "Air":
-                    self.talk("Ik zie: Niks")
-                    self._program_host.result = "Lucht"
+                    self.talk("Ik zie: niks")
+                    self._program_host.result = "niks"
                 else:
                     self.talk(f"Ik zie: {obj.name}")
                     self._program_host.result = obj.name
